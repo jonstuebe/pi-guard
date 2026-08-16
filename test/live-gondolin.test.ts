@@ -1,3 +1,4 @@
+import { VM } from "@earendil-works/gondolin";
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -13,6 +14,16 @@ import {
 } from "../src/tools.js";
 
 const live = process.env.PI_GUARD_LIVE_TEST === "1";
+
+function createLiveManager(config: EffectiveGuardConfig): GuardVmManager {
+	const accel = process.env.PI_GUARD_QEMU_ACCEL;
+	return new GuardVmManager({
+		config,
+		...(accel
+			? { createVm: (options) => VM.create({ ...options, sandbox: { ...options?.sandbox, accel } }) }
+			: {}),
+	});
+}
 
 test(
 	"live Gondolin security boundary",
@@ -53,7 +64,7 @@ test(
 
 		const previousSecret = process.env.PI_GUARD_LIVE_SECRET;
 		process.env.PI_GUARD_LIVE_SECRET = "must-not-enter-guest";
-		const manager = new GuardVmManager({ config });
+		const manager = createLiveManager(config);
 		let readonlyManager: GuardVmManager | undefined;
 		try {
 			const vm = await manager.ensureStarted();
@@ -130,8 +141,9 @@ test(
 			assert.notEqual(internalNetwork.exitCode, 0, "internal networking unexpectedly allowed localhost");
 
 			await manager.close();
-			readonlyManager = new GuardVmManager({
-				config: { ...config, filesystem: { ...config.filesystem, workspaceAccess: "read-only" } },
+			readonlyManager = createLiveManager({
+				...config,
+				filesystem: { ...config.filesystem, workspaceAccess: "read-only" },
 			});
 			const readonlyVm = await readonlyManager.ensureStarted();
 			assert.equal((await readonlyVm.fs.readFile("/workspace/public.txt", { encoding: "utf8" })).trim(), "public-data");

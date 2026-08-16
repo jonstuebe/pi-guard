@@ -82,7 +82,7 @@ A blocked state means host fallback did not occur. Fix the prerequisite or polic
 | File appears missing | Check `/guard-explain <path>`; hidden paths deliberately look absent. |
 | Tool disabled | Remove it or explicitly allow it globally only after confirming it enforces equivalent policy. |
 
-Keep QEMU, Node.js, Pi, and Pi Guard patched. Pin Pi Guard versions in managed environments and rerun the live security suite after upgrades.
+Keep QEMU, Node.js, Pi, and Pi Guard patched. Pin Pi Guard versions in managed environments and rerun the live security suite after upgrades. GitHub-hosted macOS runners use test-only QEMU TCG because they do not expose HVF; normal Pi Guard sessions retain Gondolin's platform accelerator selection.
 
 ## 5. Verify releases and measure the local runtime
 

@@ -1,3 +1,4 @@
+import { VM } from "@earendil-works/gondolin";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
@@ -7,6 +8,16 @@ import type { EffectiveGuardConfig } from "../src/config.js";
 import { GuardVmManager } from "../src/gondolin.js";
 
 const liveNetwork = process.env.PI_GUARD_LIVE_TEST === "1" && process.env.PI_GUARD_LIVE_NETWORK_TEST === "1";
+
+function createLiveManager(config: EffectiveGuardConfig): GuardVmManager {
+	const accel = process.env.PI_GUARD_QEMU_ACCEL;
+	return new GuardVmManager({
+		config,
+		...(accel
+			? { createVm: (options) => VM.create({ ...options, sandbox: { ...options?.sandbox, accel } }) }
+			: {}),
+	});
+}
 
 test(
 	"live Gondolin exact-host and redirect network boundary",
@@ -29,7 +40,7 @@ test(
 			canonicalProjectRoot: projectRoot,
 			sources: { global: path.join(projectRoot, "global-config.json") },
 		};
-		const manager = new GuardVmManager({ config });
+		const manager = createLiveManager(config);
 		try {
 			const vm = await manager.ensureStarted();
 			const clientProbe = await vm.exec(["/bin/sh", "-lc", "command -v curl"], { cwd: "/workspace" });
