@@ -8,8 +8,8 @@ Pi Guard must come from a user-owned location. Do not install it from the reposi
 # Local checkout during development
 pi install /absolute/path/to/pi-guard
 
-# Published package, after a release exists
-pi install npm:pi-guard@<pinned-version>
+# Published package
+pi install npm:@jonstuebe/pi-guard@<pinned-version>
 ```
 
 Requirements:

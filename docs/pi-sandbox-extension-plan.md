@@ -391,7 +391,7 @@ Use a strict versioned schema and reject ambiguous values rather than silently i
 Install `pi-guard` globally for use with untrusted repositories:
 
 ```bash
-pi install npm:pi-guard
+pi install npm:@jonstuebe/pi-guard
 ```
 
 Do not rely on a project-local extension for the security boundary. Pi loads project-local extensions only after project trust, and trusted project extensions execute with full host permissions.
@@ -440,7 +440,7 @@ pi-guard/
 
 ```json
 {
-  "name": "pi-guard",
+  "name": "@jonstuebe/pi-guard",
   "keywords": ["pi-package"],
   "type": "module",
   "pi": {

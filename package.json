@@ -1,8 +1,19 @@
 {
-  "name": "pi-guard",
+  "name": "@jonstuebe/pi-guard",
   "version": "0.1.0",
   "description": "Strict-by-default Gondolin sandbox extension for Pi",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonstuebe/pi-guard.git"
+  },
+  "homepage": "https://github.com/jonstuebe/pi-guard#readme",
+  "bugs": {
+    "url": "https://github.com/jonstuebe/pi-guard/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "pi-package",
     "pi-extension",
