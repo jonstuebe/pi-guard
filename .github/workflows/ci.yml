@@ -35,9 +35,6 @@ jobs:
         os: [ubuntu-latest, macos-14]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
-    env:
-      # GitHub-hosted macOS runners do not expose HVF; use software emulation only in live CI tests.
-      PI_GUARD_QEMU_ACCEL: ${{ runner.os == 'macOS' && 'tcg' || '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -51,5 +48,12 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install qemu
       - run: npm ci
-      - run: npm run test:live
-      - run: npm run test:live:network
+      - name: Run live security boundary
+        run: npm run test:live
+        env:
+          # GitHub-hosted macOS runners do not expose HVF; use software emulation only in live CI tests.
+          PI_GUARD_QEMU_ACCEL: ${{ runner.os == 'macOS' && 'tcg' || '' }}
+      - name: Run live network boundary
+        run: npm run test:live:network
+        env:
+          PI_GUARD_QEMU_ACCEL: ${{ runner.os == 'macOS' && 'tcg' || '' }}
