@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pi.dev/schemas/pi-guard/config.schema.json",
+  "title": "Pi Guard global configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version"],
+  "properties": {
+    "version": { "const": 1 },
+    "mode": { "enum": ["strict", "compatible", "disabled"] },
+    "filesystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deny": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "workspaceAccess": { "enum": ["read-write", "read-only"] }
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowedHosts": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "blockInternalRanges": { "type": "boolean" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allowFromHost": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "values": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "hostCommands": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9-]*$" },
+      "additionalProperties": { "$ref": "#/$defs/hostCommand" }
+    },
+    "externalTools": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allow": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "userBash": { "enum": ["sandbox", "host", "blocked"] },
+    "approvalTimeoutSeconds": { "type": "integer", "minimum": 1 }
+  },
+  "$defs": {
+    "hostCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "projectRoot", "program", "args"],
+      "properties": {
+        "description": { "type": "string", "minLength": 1 },
+        "projectRoot": { "type": "string", "minLength": 1 },
+        "program": { "type": "string", "minLength": 1 },
+        "args": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "cwd": { "type": "string", "minLength": 1 },
+        "timeoutSeconds": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

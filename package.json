@@ -1,0 +1,57 @@
+{
+  "name": "pi-guard",
+  "version": "0.1.0",
+  "description": "Strict-by-default Gondolin sandbox extension for Pi",
+  "type": "module",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "sandbox",
+    "gondolin"
+  ],
+  "files": [
+    "src/",
+    "schemas/",
+    "templates/",
+    "scripts/",
+    "docs/",
+    "README.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts",
+    "test:live": "PI_GUARD_LIVE_TEST=1 node --import tsx --test test/live-gondolin.test.ts",
+    "test:live:network": "PI_GUARD_LIVE_TEST=1 PI_GUARD_LIVE_NETWORK_TEST=1 node --import tsx --test test/live-network.test.ts",
+    "test:install": "node scripts/package-install-smoke.mjs",
+    "benchmark": "node --import tsx scripts/benchmark-live.mts",
+    "package:check": "npm pack --dry-run --json",
+    "verify": "npm run check && npm test",
+    "verify:release": "npm run verify && npm run test:install && npm run package:check"
+  },
+  "dependencies": {
+    "@earendil-works/gondolin": "0.12.0",
+    "tsx": "^4.20.6"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.84.2",
+    "@types/node": "^24.10.0",
+    "typebox": "^1.0.55",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=23.6.0"
+  },
+  "license": "Apache-2.0"
+}
